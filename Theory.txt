@@ -1,0 +1,6 @@
+##The Algorithm of Automatic Drawing Molecular Formulas
+
+###1. 分子檔案格式( .mol )
+裡面存放分子中各原子的資訊, 包括電荷、3D位置.......等，與鍵結的資訊，包括哪兩個原子所鍵結、Bond order......等。
+
+###2. 演算法結構
