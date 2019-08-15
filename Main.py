@@ -4,7 +4,6 @@ Created on Fri May  3 09:41:01 2019
 
 @author: gogho
 """
-import time
 # =================================================================
 # =================================================================
 from os import path
@@ -15,61 +14,22 @@ from module.RenderMol import getMolCoordinate
 
 import math
 
-t0 = time.clock()
 filepath = path.dirname( path.abspath( __file__ ))
 sys.path.append(filepath)
-print( filepath )
 
-# ----- MDL File ------
-#filepath = filepath + '//Mol Model//Caffeine.mol'
-#filepath = filepath + '//Mol Model//mol1.mol'
+# ----- Open MDL File ------
 filepath = filepath + '//Mol Model//mol8.mol'
 mol = openMDL(filepath)
 
-
 info = MolInfo(mol)
 info.RingPerception()
-print( 'Ring : ', [  ring.sequence for ring in info.rings] )
-print( 'Fused Ring : ', [ fusedring.fused_ring for fusedring in info.fused_rings] )  
-
 
 print('-----Test----')
-#print( info.fused_rings[0].sortAttachRing() )
 coord = []
 coord = getMolCoordinate( mol,info, BOND_LENGTH = 1 )
-'''
-try:
-    import matplotlib.pyplot as plt 
-    plt.figure()
-    x,y = [], []
-    count = 0
-    for c in coord:
-        if mol.Atoms[count].label == 'H':
-            continue
-        x.append( c[0] )
-        y.append( c[1] )
-        count += 1
 
-    plt.scatter(x,y)
-
-    line_x, line_y = [], []
-    for bond in mol.Bonds:
-        if (mol.Atoms[ bond.connected_atom[0] ].label == 'H') or (
-            mol.Atoms[ bond.connected_atom[1] ].label == 'H'):
-            continue 
-        coord1 = coord[ bond.connected_atom[0] ]
-        coord2 = coord[ bond.connected_atom[1] ]
-        line_x = [ coord1[0], coord2[0] ]
-        line_y = [ coord1[1], coord2[1] ]
-        plt.plot(line_x, line_y)
-    plt.xlim(-8,8)
-    plt.ylim(-8,8)
-    print( 'time : ', time.clock() - t0 )
-    plt.show()
-except:
-    pass
-'''
-# =======================
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== 
+# ---------- 初始化 tk 視窗 ----------
 from tkinter import *
 root = Tk()
 root.wm_minsize(800, 600)
@@ -79,6 +39,7 @@ new_coord = [0] * len(coord)
 min_x, min_y = coord[0][0], coord[0][1]
 sum_x, sum_y = 0, 0
 count = 0
+# ------------ 放大計算出來的分子座標 & 計算分子座標重心位置 ----------
 for i in range( len(coord) ):
     if coord[i] == 0:
         continue
@@ -91,12 +52,14 @@ for i in range( len(coord) ):
     if coord[i][1] < min_y:
         min_y = new_coord[i][1]
 
+# ---------- 移動分子圖至視窗中心 ----------
 for i in range( len(new_coord) ):
     if new_coord[i] == 0:
         # 通常為 C-H 的情況
         continue
     new_coord[i] =  (new_coord[i][0] + (400 - sum_x/count), new_coord[i][1] + ( 300 - sum_y/count) )
-    
+
+# ----------- 畫上分子鍵結 ----------
 stack, visit =[ 0 ], []
 while stack:
     index = stack.pop()
@@ -136,13 +99,17 @@ while stack:
                                 coord[3] + const*y_const - vector[1]*0.1]
                     cv.create_line( nc[0], nc[1], nc[2], nc[3], width=2 )
 
+# ---------- 畫原子 ----------
 size, color=15, 'black'
 count = -1
 for atom in mol.Atoms:
     count += 1
     if atom.label != 'C'  :
         if new_coord[count] == 0:
+            # 若座標 = 0 而非(x,y)，表示演算法未對該原子做計算，故跳過
+            # 可能為碳上的 H
             continue
+        # ----------- 先畫上一個空白圓形蓋上要畫上原子名稱的區域 ----------
         cv.create_oval( new_coord[count][0]-size, new_coord[count][1]-size, 
                            new_coord[count][0]+size, new_coord[count][1]+size,
                            fill='white', outline='white' )
@@ -154,8 +121,7 @@ for atom in mol.Atoms:
             color = 'black'
         cv.create_text( new_coord[count][0], new_coord[count][1], 
                            text = atom.label, font=("Purisa", 14, 'bold'), fill=color )
-    
-
+# ------------ 顯示視窗 ----------
 cv.pack()
 root.mainloop()
 
