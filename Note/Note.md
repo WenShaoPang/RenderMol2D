@@ -99,7 +99,14 @@ https://www.geeksforgeeks.org/tarjan-algorithm-find-strongly-connected-component
 
 https://www.geeksforgeeks.org/bridge-in-a-graph/
 
+OpenEye - Bibliography - 2D Coordinate Generation
+https://docs.eyesopen.com/toolkits/python/oechemtk/2Dcoordinates.html
+
+
 相關慘考文獻
+2D-Structure Drawings of Similar Molecules
+https://link.springer.com/chapter/10.1007/3-540-44541-2_11
+
 Structure Diagram Generation
 https://onlinelibrary.wiley.com/doi/10.1002/9780470125908.ch6
 
